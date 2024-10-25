@@ -3752,7 +3752,8 @@ protected:
 
     /// \brief Compute environment body indices pair. pack the two bodies' envBodyIndices (32bit int) into one environment body indices pair (uint64_t).
     ///        Here, environment body indices pair is uint64_t, which higher 32bits are for body2 envBodyIndex, and which lower 32bits are for body1 envBodyIndex.
-    static uint64_t _ComputeEnvironmentBodyIndicesPair(const KinBody& body1, const KinBody& body2);
+    ///        Note that index1 < index2.
+    static uint64_t _ComputeEnvironmentBodyIndicesPair(const uint64_t index1, const uint64_t index2);
 
     /// \brief Extract the first body's environmentBodyIndex from environment body indices pair.
     static int _GetFirstEnvironmentBodyIndexFromPair(const uint64_t pair);
@@ -3829,7 +3830,7 @@ protected:
     mutable std::string __hashKinematicsGeometryDynamics; ///< hash serializing kinematics, dynamics and geometry properties of the KinBody
     int64_t _lastModifiedAtUS=0; ///< us, linux epoch, last modified time of the kinbody when it was originally loaded from the environment.
     int64_t _revisionId = 0; ///< the webstack revision for this loaded kinbody
-    std::unordered_map<uint64_t, ListNonCollidingLinkPairs> _mapListNonCollidingInterGrabbedLinkPairsWhenGrabbed; ///< map of list of link pairs. This is computed when grabbed bodies are grabbed, and at taht time, two grabbed bodies are not touching each other. Since these links are not colliding at the time of grabbing, they should remain non-colliding with the grabbed body throughout. If, while grabbing, they collide with the grabbed body at some point, CheckSelfCollision should return true. It is important to note that the enable state of a link does *not* affect its membership of this list. Each pair in the list should be [Grabbed1-link, Grabbed2-link]. Note that this does not contain link pairs of [Grabbed-link, Grabber-link], c.f. Grabbed::_listNonCollidingGrabbedGrabberLinkPairsWhenGrabbed. Note that the key of this map is 'environment body indices pair', which higher 32bits are for the first KinBody's envBodyIndex, and which lower 32bits are for the second KinBody's envBodyIndex. Please also see _ComputeEnvironmentBodyIndicesPair.
+    std::unordered_map<uint64_t, ListNonCollidingLinkPairs> _mapListNonCollidingInterGrabbedLinkPairsWhenGrabbed; ///< map of list of link pairs. This is computed when grabbed bodies are grabbed, and at taht time, two grabbed bodies are not touching each other. Since these links are not colliding at the time of grabbing, they should remain non-colliding with the grabbed body throughout. If, while grabbing, they collide with the grabbed body at some point, CheckSelfCollision should return true. It is important to note that the enable state of a link does *not* affect its membership of this list. Each pair in the list should be [Grabbed1-link, Grabbed2-link]. Note that this does not contain link pairs of [Grabbed-link, Grabber-link], c.f. Grabbed::_listNonCollidingGrabbedGrabberLinkPairsWhenGrabbed. Note that the key of this map is 'environment body indices pair', which lower 32bits are for the first KinBody's envBodyIndex, and which higher 32bits are for the second KinBody's envBodyIndex. The first envBodyIndex should be always smaller than the second envBodyIndex to simplify searching. Please also see _ComputeEnvironmentBodyIndicesPair.
     uint64_t _nextGrabbedBodyUniqueId = 0; ///< This indicates the unique id of the next grabbed body. Monotonically increasing, except for the resetting when all grabbed bodies are released, ...etc. Lower unique id means grabbed earlier, and we can identify the order of grabbed bodies through this Id.
 
 private:
