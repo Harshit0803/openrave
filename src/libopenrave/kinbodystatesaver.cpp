@@ -195,6 +195,15 @@ void KinBody::_RestoreGrabbedBodiesFromSavedData(const KinBody& savedBody,
                 RAVELOG_WARN_FORMAT("env=%s, new grabbed body '%s' kinematics-geometry hash is different from original grabbed body '%s' from env=%s", GetEnv()->GetNameId()%pSecond->GetName()%pSecondSaved->GetName()%savedBody.GetEnv()->GetNameId());
                 continue;
             }
+
+            const int envBodyIndexFirst = pFirst->GetEnvironmentBodyIndex();
+            const int envBodyIndexSecond = pSecond->GetEnvironmentBodyIndex();
+
+            // savedMapListNonCollidingInterGrabbedLinkPairsWhenGrabbed satisfies the rule of indices pair, e.g. pFirstSaved->GetEnvironmentBodyIndex() < pSecond->GetEnvironmentBodyIndex(). Thus, same rule should be satisfied to the restoring scene.
+            OPENRAVE_ASSERT_OP_FORMAT(envBodyIndexFirst, <, envBodyIndexSecond,
+                                      "env=%s, envBodyIndex for '%s'(%d) and '%s'(%d) are invalid. The former one should be smaller. from env=%s", GetEnv()->GetNameId()%pFirst->GetName()%pFirst->GetEnvironmentBodyIndex()%pSecond->GetName()%pSecond->GetEnvironmentBodyIndex()%savedBody.GetEnv()->GetNameId(), ORE_Failed);
+
+            // compute and push
             KinBody::ListNonCollidingLinkPairs listNonCollidingLinkPairs;
             FOREACHC(itLinkPairSaved, itInfoSaved->second) {
                 const int linkIndexFirst = (*itLinkPairSaved).first->GetIndex();
@@ -206,7 +215,7 @@ void KinBody::_RestoreGrabbedBodiesFromSavedData(const KinBody& savedBody,
                 listNonCollidingLinkPairs.emplace_back(pFirst->GetLinks()[linkIndexFirst], pSecond->GetLinks()[linkIndexSecond]);
             }
             if( listNonCollidingLinkPairs.size() > 0 ){
-                const uint64_t key = _ComputeEnvironmentBodyIndicesPair(*pFirst, *pSecond);
+                const uint64_t key = _ComputeEnvironmentBodyIndicesPair(envBodyIndexFirst, envBodyIndexSecond);
                 _mapListNonCollidingInterGrabbedLinkPairsWhenGrabbed.emplace(key, std::move(listNonCollidingLinkPairs));
             }
         }

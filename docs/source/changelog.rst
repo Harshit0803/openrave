@@ -3,6 +3,13 @@
 ChangeLog
 #########
 
+Version 0.157.0
+===============
+
+- Fix bug of `_listNonColidingLinksWhenGrabbed` asymmetricity which might cause false positive/negative self collision checking and might make it less deterministic.
+  - Store the link pair for grabbed-grabber collision in `Grabbed` class.
+  - Store the link pair for inter-grabbed collision in `KinBody` class.
+
 Version 0.156.0
 ===============
 
