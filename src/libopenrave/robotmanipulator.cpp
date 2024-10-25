@@ -1225,8 +1225,7 @@ bool RobotBase::Manipulator::_CheckEndEffectorCollision(const IkParameterization
     }
 
     // if IK can be solved, then there exists a solution for the end effector that is not in collision
-    IkReturn ikreturn(IKRA_Success);
-    IkReturnPtr pikreturn(&ikreturn,utils::null_deleter());
+    IkReturnPtr pikreturn(new IkReturn(IKRA_Success));
 
     // need to use free params here since sometimes IK can have 3+ free DOF and it would freeze searching for all of them
     std::vector<dReal> vFreeParameters;
@@ -1235,8 +1234,8 @@ bool RobotBase::Manipulator::_CheckEndEffectorCollision(const IkParameterization
         return false;
     }
     else {
-        if( (ikreturn._action&IKRA_RejectSelfCollision) != IKRA_RejectSelfCollision && (ikreturn._action&IKRA_RejectEnvCollision) != IKRA_RejectEnvCollision ) {
-            RAVELOG_VERBOSE_FORMAT("ik solution not found due to non-collision reasons (0x%x), returning true anway...", ikreturn._action);
+        if( (pikreturn->_action&IKRA_RejectSelfCollision) != IKRA_RejectSelfCollision && (pikreturn->_action&IKRA_RejectEnvCollision) != IKRA_RejectEnvCollision ) {
+            RAVELOG_VERBOSE_FORMAT("ik solution not found due to non-collision reasons (0x%x), returning true anway...", pikreturn->_action);
             // is this a good idea?
         }
         if( !!report ) {
@@ -1297,8 +1296,7 @@ bool RobotBase::Manipulator::CheckEndEffectorSelfCollision(const IkParameterizat
     }
 
     // if IK can be solved, then there exists a solution for the end effector that is not in collision
-    IkReturn ikreturn(IKRA_Success);
-    IkReturnPtr pikreturn(&ikreturn,utils::null_deleter());
+    IkReturnPtr pikreturn(new IkReturn(IKRA_Success));
 
     // need to use free params here since sometimes IK can have 3+ free DOF and it would freeze searching for all of them
     std::vector<dReal> vFreeParameters;
@@ -1307,8 +1305,8 @@ bool RobotBase::Manipulator::CheckEndEffectorSelfCollision(const IkParameterizat
         return false;
     }
     else {
-        if( (ikreturn._action&IKRA_RejectSelfCollision) != IKRA_RejectSelfCollision && (ikreturn._action&IKRA_RejectEnvCollision) != IKRA_RejectEnvCollision ) {
-            RAVELOG_VERBOSE_FORMAT("ik solution not found due to non-collision reasons (0x%x), returning true anway...", ikreturn._action);
+        if( (pikreturn->_action&IKRA_RejectSelfCollision) != IKRA_RejectSelfCollision && (pikreturn->_action&IKRA_RejectEnvCollision) != IKRA_RejectEnvCollision ) {
+            RAVELOG_VERBOSE_FORMAT("ik solution not found due to non-collision reasons (0x%x), returning true anway...", pikreturn->_action);
             // is this a good idea?
         }
         if( !!report ) {

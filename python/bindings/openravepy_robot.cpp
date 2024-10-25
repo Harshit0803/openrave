@@ -1212,25 +1212,23 @@ object PyRobotBase::PyManipulator::GetIkConfigurationSpecification(IkParameteriz
 
 bool PyRobotBase::PyManipulator::CheckEndEffectorCollision(PyCollisionReportPtr pyreport) const
 {
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bcollision = _pmanip->CheckEndEffectorCollision(preport);
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bcollision;
 }
 
 bool PyRobotBase::PyManipulator::CheckEndEffectorCollision(object otrans, PyCollisionReportPtr pyreport, int numredundantsamples) const
 {
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bCollision;
@@ -1242,32 +1240,30 @@ bool PyRobotBase::PyManipulator::CheckEndEffectorCollision(object otrans, PyColl
         bCollision = _pmanip->CheckEndEffectorCollision(ExtractTransform(otrans),preport, numredundantsamples);
     }
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }
 
 bool PyRobotBase::PyManipulator::CheckEndEffectorSelfCollision(PyCollisionReportPtr pyreport) const
 {
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bcollision = _pmanip->CheckEndEffectorSelfCollision(preport);
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bcollision;
 }
 
 bool PyRobotBase::PyManipulator::CheckEndEffectorSelfCollision(object otrans, PyCollisionReportPtr pyreport, int numredundantsamples, bool ignoreManipulatorLinks) const
 {
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bCollision;
@@ -1279,7 +1275,7 @@ bool PyRobotBase::PyManipulator::CheckEndEffectorSelfCollision(object otrans, Py
         bCollision = _pmanip->CheckEndEffectorSelfCollision(ExtractTransform(otrans), preport, numredundantsamples, ignoreManipulatorLinks);
     }
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }
@@ -1290,15 +1286,14 @@ bool PyRobotBase::PyManipulator::CheckIndependentCollision() const
 }
 bool PyRobotBase::PyManipulator::CheckIndependentCollision(PyCollisionReportPtr pyreport) const
 {
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bCollision = _pmanip->CheckIndependentCollision(preport);
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }
@@ -2221,15 +2216,14 @@ bool PyRobotBase::Grab(PyKinBodyPtr pbody, object pylink, object linkstoignore, 
 
 bool PyRobotBase::CheckLinkSelfCollision(int ilinkindex, object olinktrans, PyCollisionReportPtr pyreport)
 {
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bCollision = _probot->CheckLinkSelfCollision(ilinkindex, ExtractTransform(olinktrans), preport);
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }

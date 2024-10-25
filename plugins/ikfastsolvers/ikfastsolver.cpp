@@ -638,13 +638,12 @@ protected:
         if( !!result ) {
             result->resize(0);
         }
-        IkReturn ikreturn(IKRA_Success);
-        IkReturnPtr pikreturn(&ikreturn,utils::null_deleter());
+        IkReturnPtr pikreturn(new IkReturn(IKRA_Success));
         if( !Solve(rawparam,q0local,filteroptions,pikreturn) ) {
             return false;
         }
         if( !!result ) {
-            *result = ikreturn._vsolution;
+            *result = pikreturn->_vsolution;
         }
         return true;
     }
@@ -669,13 +668,12 @@ protected:
         if( !!result ) {
             result->resize(0);
         }
-        IkReturn ikreturn(IKRA_Success);
-        IkReturnPtr pikreturn(&ikreturn,utils::null_deleter());
+        IkReturnPtr pikreturn(new IkReturn(IKRA_Success));
         if( !Solve(param,q0local,vFreeParameters,filteroptions,pikreturn) ) {
             return false;
         }
         if( !!result ) {
-            *result = ikreturn._vsolution;
+            *result = pikreturn->_vsolution;
         }
         return true;
     }
@@ -1591,10 +1589,9 @@ protected:
             }
         }
 
-        CollisionReport report;
         CollisionReportPtr ptempreport;
         if( !(filteroptions&IKFO_IgnoreSelfCollisions) || IS_DEBUGLEVEL(Level_Verbose) || paramnewglobal.GetType() == IKP_TranslationDirection5D ) { // 5D is necessary for tracking end effector collisions
-            ptempreport = boost::shared_ptr<CollisionReport>(&report,utils::null_deleter());
+            ptempreport = CollisionReportPtr(new CollisionReport);
         }
         if( !(filteroptions&IKFO_IgnoreSelfCollisions) ) {
             // check for self collisions
@@ -1681,7 +1678,7 @@ protected:
                     if( pmanip->CheckEndEffectorCollision(pmanip->GetTransform(), ptempreport) ) {
                         if( !!ptempreport ) {
                             stringstream ss; ss << std::setprecision(std::numeric_limits<OpenRAVE::dReal>::digits10+1);
-                            ss << "ikfast collision " << report.__str__() << " colvalues=[";
+                            ss << "ikfast collision " << ptempreport->__str__() << " colvalues=[";
                             std::vector<dReal> vallvalues;
                             probot->GetDOFValues(vallvalues);
                             for(size_t i = 0; i < vallvalues.size(); ++i ) {
@@ -1741,7 +1738,7 @@ protected:
 
                 if( !!ptempreport ) {
                     stringstream ss; ss << std::setprecision(std::numeric_limits<OpenRAVE::dReal>::digits10+1);
-                    ss << "env=" << GetEnv()->GetId() << ", ikfast collision " << probot->GetName() << ":" << pmanip->GetName() << " " << report.__str__() << " colvalues=[";
+                    ss << "env=" << GetEnv()->GetId() << ", ikfast collision " << probot->GetName() << ":" << pmanip->GetName() << " " << ptempreport->__str__() << " colvalues=[";
                     std::vector<dReal> vallvalues;
                     probot->GetDOFValues(vallvalues);
                     for(size_t i = 0; i < vallvalues.size(); ++i ) {
@@ -2042,10 +2039,9 @@ protected:
             }
         }
 
-        CollisionReport report;
         CollisionReportPtr ptempreport;
         if( IS_DEBUGLEVEL(Level_Verbose) ) {
-            ptempreport = boost::shared_ptr<CollisionReport>(&report,utils::null_deleter());
+            ptempreport = CollisionReportPtr(new CollisionReport);
         }
         if( !(filteroptions&IKFO_IgnoreSelfCollisions) ) {
             stateCheck.SetSelfCollisionState();
@@ -2168,7 +2164,7 @@ protected:
             if( GetEnv()->CheckCollision(KinBodyConstPtr(probot), ptempreport) ) {
                 if( !!ptempreport ) {
                     stringstream ss; ss << std::setprecision(std::numeric_limits<OpenRAVE::dReal>::digits10+1);
-                    ss << "ikfast collision " << report.__str__() << " colvalues=[";
+                    ss << "ikfast collision " << ptempreport->__str__() << " colvalues=[";
                     std::vector<dReal> vallvalues;
                     probot->GetDOFValues(vallvalues);
                     for(size_t i = 0; i < vallvalues.size(); ++i ) {

@@ -3536,9 +3536,8 @@ void KinBody::ComputeInverseDynamics(std::vector<dReal>& doftorques, const std::
     if( !bHasVelocity ) {
         vDOFVelocities.resize(0);
     }
-    AccelerationMap externalaccelerations;
-    externalaccelerations[0] = make_pair(-vgravity, Vector());
-    AccelerationMapPtr pexternalaccelerations(&externalaccelerations, utils::null_deleter());
+    AccelerationMapPtr pexternalaccelerations(new AccelerationMap);
+    (*pexternalaccelerations)[0] = make_pair(-vgravity, Vector());
     _ComputeLinkAccelerations(vDOFVelocities, vDOFAccelerations, vLinkVelocities, vLinkAccelerations, pexternalaccelerations);
 
     // all valuess are in the global coordinate system
@@ -3676,9 +3675,8 @@ void KinBody::ComputeInverseDynamics(boost::array< std::vector<dReal>, 3>& vDOFT
         vDOFVelocities.resize(0);
     }
 
-    AccelerationMap externalaccelerations;
-    externalaccelerations[0] = make_pair(-vgravity, Vector());
-    AccelerationMapPtr pexternalaccelerations(&externalaccelerations, utils::null_deleter());
+    AccelerationMapPtr pexternalaccelerations(new AccelerationMap);
+    (*pexternalaccelerations)[0] = make_pair(-vgravity, Vector());
 
     // all valuess are in the global coordinate system
     // try to compute as little as possible by checking what is non-zero

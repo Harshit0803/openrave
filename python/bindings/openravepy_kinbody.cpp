@@ -4032,15 +4032,14 @@ PyInterfaceBasePtr PyKinBody::GetSelfCollisionChecker()
 
 bool PyKinBody::CheckSelfCollision(PyCollisionReportPtr pyreport, PyCollisionCheckerBasePtr pycollisionchecker)
 {
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bCollision = _pbody->CheckSelfCollision(preport, openravepy::GetCollisionChecker(pycollisionchecker));
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }

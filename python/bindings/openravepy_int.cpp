@@ -1351,15 +1351,14 @@ bool PyEnvironmentBase::CheckCollision(PyKinBodyPtr pbody1)
 bool PyEnvironmentBase::CheckCollision(PyKinBodyPtr pbody1, PyCollisionReportPtr pyreport)
 {
     CHECK_POINTER(pbody1);
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bCollision = _penv->CheckCollision(KinBodyConstPtr(openravepy::GetKinBody(pbody1)), preport);
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }
@@ -1375,15 +1374,14 @@ bool PyEnvironmentBase::CheckCollision(PyKinBodyPtr pbody1, PyKinBodyPtr pbody2,
 {
     CHECK_POINTER(pbody1);
     CHECK_POINTER(pbody2);
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bCollision = _penv->CheckCollision(KinBodyConstPtr(openravepy::GetKinBody(pbody1)), KinBodyConstPtr(openravepy::GetKinBody(pbody2)), preport);
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }
@@ -1405,10 +1403,9 @@ bool PyEnvironmentBase::CheckCollision(object o1)
 bool PyEnvironmentBase::CheckCollision(object o1, PyCollisionReportPtr pyreport)
 {
     CHECK_POINTER(o1);
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     KinBody::LinkConstPtr plink = openravepy::GetKinBodyLinkConst(o1);
@@ -1426,7 +1423,7 @@ bool PyEnvironmentBase::CheckCollision(object o1, PyCollisionReportPtr pyreport)
         }
     }
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }
@@ -1449,10 +1446,9 @@ bool PyEnvironmentBase::CheckCollision(object o1, object o2)
         if( !IS_PYTHONOBJECT_NONE(o2) ) {
             extract_<PyCollisionReportPtr> epyreport2(o2);
             if( epyreport2.check() ) {
-                CollisionReport report;
-                CollisionReportPtr preport(&report,utils::null_deleter());
+                CollisionReportPtr preport(new CollisionReport);
                 bool bCollision = _penv->CheckCollision(plink,preport);
-                ((PyCollisionReportPtr)epyreport2)->Init(report);
+                ((PyCollisionReportPtr)epyreport2)->Init(*preport);
                 return bCollision;
             }
         }
@@ -1473,10 +1469,9 @@ bool PyEnvironmentBase::CheckCollision(object o1, object o2)
         if( !IS_PYTHONOBJECT_NONE(o2) ) {
             extract_<PyCollisionReportPtr> epyreport2(o2);
             if( epyreport2.check() ) {
-                CollisionReport report;
-                CollisionReportPtr preport(&report,utils::null_deleter());
+                CollisionReportPtr preport(new CollisionReport);
                 bool bCollision = _penv->CheckCollision(pbody,preport);
-                ((PyCollisionReportPtr)epyreport2)->Init(report);
+                ((PyCollisionReportPtr)epyreport2)->Init(*preport);
                 return bCollision;
             }
         }
@@ -1490,10 +1485,9 @@ bool PyEnvironmentBase::CheckCollision(object o1, object o2, PyCollisionReportPt
 {
     CHECK_POINTER(o1);
     CHECK_POINTER(o2);
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bCollision = false;
@@ -1535,7 +1529,7 @@ bool PyEnvironmentBase::CheckCollision(object o1, object o2, PyCollisionReportPt
     }
 
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }
@@ -1560,10 +1554,9 @@ bool PyEnvironmentBase::CheckCollision(object o1, PyKinBodyPtr pybody2, PyCollis
 {
     CHECK_POINTER(o1);
     CHECK_POINTER(pybody2);
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     KinBodyConstPtr pbody2 = openravepy::GetKinBody(pybody2);
@@ -1582,7 +1575,7 @@ bool PyEnvironmentBase::CheckCollision(object o1, PyKinBodyPtr pybody2, PyCollis
         }
     }
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }
@@ -1629,10 +1622,9 @@ bool PyEnvironmentBase::CheckCollision(object o1, object bodyexcluded, object li
 
 bool PyEnvironmentBase::CheckCollision(object o1, object bodyexcluded, object linkexcluded, PyCollisionReportPtr pyreport)
 {
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     std::vector<KinBodyConstPtr> vbodyexcluded;
@@ -1671,7 +1663,7 @@ bool PyEnvironmentBase::CheckCollision(object o1, object bodyexcluded, object li
     }
 
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }
@@ -1703,10 +1695,9 @@ bool PyEnvironmentBase::CheckCollision(PyKinBodyPtr pbody, object bodyexcluded, 
 
 bool PyEnvironmentBase::CheckCollision(PyKinBodyPtr pbody, object bodyexcluded, object linkexcluded, PyCollisionReportPtr pyreport)
 {
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     std::vector<KinBodyConstPtr> vbodyexcluded;
@@ -1732,7 +1723,7 @@ bool PyEnvironmentBase::CheckCollision(PyKinBodyPtr pbody, object bodyexcluded, 
 
     bool bCollision = _penv->CheckCollision(KinBodyConstPtr(openravepy::GetKinBody(pbody)), vbodyexcluded, vlinkexcluded, preport);
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }
@@ -1744,15 +1735,14 @@ bool PyEnvironmentBase::CheckCollision(OPENRAVE_SHARED_PTR<PyRay> pyray, PyKinBo
 
 bool PyEnvironmentBase::CheckCollision(OPENRAVE_SHARED_PTR<PyRay> pyray, PyKinBodyPtr pbody, PyCollisionReportPtr pyreport)
 {
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bCollision = _penv->CheckCollision(pyray->r, KinBodyConstPtr(openravepy::GetKinBody(pbody)), preport);
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }
@@ -1767,8 +1757,7 @@ object PyEnvironmentBase::CheckCollisionRays(py::numeric::array rays, PyKinBodyP
     if( extract<int>(shape[py::to_object(1)]) != 6 ) {
         throw OpenRAVEException(_("rays object needs to be a Nx6 vector\n"));
     }
-    CollisionReport report;
-    CollisionReportPtr preport(&report,null_deleter());
+    CollisionReportPtr preport(new CollisionReport);
 
     PyArrayObject *pPyRays = PyArray_GETCONTIGUOUS(reinterpret_cast<PyArrayObject*>(rays.ptr()));
     AutoPyArrayObjectDereferencer pyderef(pPyRays);
@@ -1829,8 +1818,8 @@ object PyEnvironmentBase::CheckCollisionRays(py::numeric::array rays, PyKinBodyP
 
             const bool bCollision = pbody ? _penv->CheckCollision(r, KinBodyConstPtr(openravepy::GetKinBody(pbody)), preport) : _penv->CheckCollision(r, preport);
 
-            if( bCollision && report.nNumValidCollisions > 0 ) {
-                const CollisionPairInfo& cpinfo = report.vCollisionInfos[0];
+            if( bCollision && preport->nNumValidCollisions > 0 ) {
+                const CollisionPairInfo& cpinfo = preport->vCollisionInfos[0];
                 if( cpinfo.contacts.size() > 0 ) {
                     if( !bFrontFacingOnly || cpinfo.contacts[0].norm.dot3(r.dir)<0 ) {
                         pcollision[i] = true;
@@ -1859,15 +1848,14 @@ bool PyEnvironmentBase::CheckCollision(OPENRAVE_SHARED_PTR<PyRay> pyray)
 
 bool PyEnvironmentBase::CheckCollision(OPENRAVE_SHARED_PTR<PyRay> pyray, PyCollisionReportPtr pyreport)
 {
-    CollisionReport report;
     CollisionReportPtr preport;
     if( !!pyreport ) {
-        preport = CollisionReportPtr(&report,utils::null_deleter());
+        preport = CollisionReportPtr(new CollisionReport);
     }
 
     bool bCollision = _penv->CheckCollision(pyray->r, preport);
     if( !!pyreport ) {
-        pyreport->Init(report);
+        pyreport->Init(*preport);
     }
     return bCollision;
 }

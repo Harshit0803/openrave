@@ -64,10 +64,9 @@ bool KinBody::CheckSelfCollision(CollisionReportPtr report, CollisionCheckerBase
 
     // if collision checker is set to distance checking, have to compare reports for the minimum distance
     int coloptions = collisionchecker->GetCollisionOptions();
-    CollisionReport tempreport;
     CollisionReportPtr pusereport = report;
     if( !!report && (coloptions & CO_Distance) ) {
-        pusereport = boost::shared_ptr<CollisionReport>(&tempreport,utils::null_deleter());
+        pusereport = CollisionReportPtr(new CollisionReport);
     }
 
     // Flatten the grabbed bodies so that we can zip our iteration with the cache of locked pointers

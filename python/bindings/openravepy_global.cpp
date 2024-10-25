@@ -93,13 +93,13 @@ public:
             return py::none_();
         }
         std::string xmlid;
-        OpenRAVE::xmlreaders::StreamXMLWriter writer(xmlid);
-        if( !_readable->SerializeXML(OpenRAVE::xmlreaders::StreamXMLWriterPtr(&writer,utils::null_deleter()),options) ) {
+        OpenRAVE::xmlreaders::StreamXMLWriterPtr pwriter(new OpenRAVE::xmlreaders::StreamXMLWriter(xmlid));
+        if( !_readable->SerializeXML(pwriter, options) ) {
             return py::none_();
         }
 
         std::stringstream ss;
-        writer.Serialize(ss);
+        pwriter->Serialize(ss);
         return ConvertStringToUnicode(ss.str());
     }
 

@@ -41,8 +41,7 @@ int JitterActiveDOF(RobotBasePtr robot,int nMaxIterations,dReal fRand,const Plan
     robot->GetActiveDOFValues(curdof);
     newdof.resize(curdof.size());
     deltadof.resize(curdof.size(),0);
-    CollisionReport report;
-    CollisionReportPtr preport(&report,utils::null_deleter());
+    CollisionReportPtr preport(new CollisionReport);
     bool bCollision = false;
     bool bConstraint = !!neighstatefn;
 
@@ -68,12 +67,12 @@ int JitterActiveDOF(RobotBasePtr robot,int nMaxIterations,dReal fRand,const Plan
 
         if(robot->CheckSelfCollision(preport)) {
             bCollision = true;
-            RAVELOG_DEBUG(str(boost::format("JitterActiveDOFs: self collision: %s!\n")%report.__str__()));
+            RAVELOG_DEBUG(str(boost::format("JitterActiveDOFs: self collision: %s!\n")%preport->__str__()));
             break;
         }
         if( robot->GetEnv()->CheckCollision(KinBodyConstPtr(robot),preport) ) {
             bCollision = true;
-            RAVELOG_DEBUG(str(boost::format("JitterActiveDOFs: collision: %s!\n")%report.__str__()));
+            RAVELOG_DEBUG(str(boost::format("JitterActiveDOFs: collision: %s!\n")%preport->__str__()));
             break;
         }
     }
@@ -193,8 +192,7 @@ int JitterCurrentConfiguration(PlannerBase::PlannerParametersConstPtr parameters
     newdof.resize(curdof.size());
     deltadof.resize(curdof.size(),0);
     zerodof.resize(curdof.size(),0);
-    CollisionReport report;
-    CollisionReportPtr preport(&report,utils::null_deleter());
+    CollisionReportPtr preport(new CollisionReport);
     bool bCollision = false;
     bool bConstraint = !!parameters->_neighstatefn;
 
