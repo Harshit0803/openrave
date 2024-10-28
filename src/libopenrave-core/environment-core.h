@@ -3105,6 +3105,11 @@ public:
             }
 
             KinBodyPtr pInitBody; // body that has to be Init() again
+            std::vector<KinBodyPtr> pGrabbingBodies;
+            std::vector<KinBody::LinkPtr> pGrabbingLinks;
+            std::vector<rapidjson::Document> rGrabbedUserDataDocuments;
+            std::vector<std::set<int>> linkIndicesToIgnore;
+
             if( !!pMatchExistingBody ) {
                 listBodiesTemporarilyRenamed.remove(pMatchExistingBody); // if targreted, then do not need to remove anymore
 
@@ -3137,10 +3142,6 @@ public:
                 }
 
                 // if this body is grabbed by another bodies, save the grabbing link and user data
-                std::vector<KinBodyPtr> pGrabbingBodies;
-                std::vector<KinBody::LinkPtr> pGrabbingLinks;
-                std::vector<rapidjson::Document> rGrabbedUserDataDocuments;
-                std::vector<std::set<int>> linkIndicesToIgnore;
                 for (const KinBodyWeakPtr& pBody : pMatchExistingBody->_listAttachedBodies) {
                     KinBodyPtr pAttached = pBody.lock();
                     if (!pAttached) {
@@ -3207,11 +3208,6 @@ public:
 
                     pInitBody = pMatchExistingBody;
                     _AddKinBody(pMatchExistingBody, IAM_StrictNameChecking); // internally locks _mutexInterfaces, name guarnateed to be unique
-                }
-
-                // re-grab after add this body back to the environment
-                for (int grabbingBodyIndex = 0; grabbingBodyIndex<pGrabbingBodies.size(); grabbingBodyIndex++) {
-                    pGrabbingBodies[grabbingBodyIndex]->Grab(pMatchExistingBody, pGrabbingLinks[grabbingBodyIndex], linkIndicesToIgnore[grabbingBodyIndex], rGrabbedUserDataDocuments[grabbingBodyIndex]);
                 }
             }
             else {
@@ -3290,6 +3286,11 @@ public:
 
                 if( bChanged ) {
                     pInitBody->SetDOFValues(vDOFValues, pKinBodyInfo->_transform, KinBody::CLA_Nothing);
+                }
+
+                // re-grab after add this body back to the environment
+                for (int grabbingBodyIndex = 0; grabbingBodyIndex<pGrabbingBodies.size(); grabbingBodyIndex++) {
+                    pGrabbingBodies[grabbingBodyIndex]->Grab(pInitBody, pGrabbingLinks[grabbingBodyIndex], linkIndicesToIgnore[grabbingBodyIndex], rGrabbedUserDataDocuments[grabbingBodyIndex]);
                 }
             }
         }
