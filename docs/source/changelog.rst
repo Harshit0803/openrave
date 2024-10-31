@@ -15,6 +15,11 @@ Version 0.157.0
   - Store the link pair for grabbed-grabber collision in `Grabbed` class.
   - Store the link pair for inter-grabbed collision in `KinBody` class.
 
+Version 0.156.1
+===============
+
+- Fix with grabbedInfo not getting correctly updated when loading a partial environment.
+
 Version 0.156.0
 ===============
 
