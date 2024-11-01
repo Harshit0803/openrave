@@ -3,6 +3,11 @@
 ChangeLog
 #########
 
+Version 0.157.0
+===============
+
+- Add print message related to non adjacent links to track the self collision issue.
+
 Version 0.156.1
 ===============
 
