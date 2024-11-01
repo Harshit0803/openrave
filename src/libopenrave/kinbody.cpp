@@ -77,7 +77,7 @@ static void _PrintDOFValuesForInitialLinkTransformations(const KinBody& body, co
         }
         ssJoints << vdoflastsetvalues[iDOF];
     }
-    RAVELOG_INFO_FORMAT("env='%s', body '%s' _vInitialLinkTransformations is updated in %s by dofValues=[%s]", body.GetEnv()->GetNameId()%body.GetName()%context%ssJoints.str());
+    RAVELOG_INFO_FORMAT("env=%s, body '%s' _vInitialLinkTransformations is updated in %s by dofValues=[%s]", body.GetEnv()->GetNameId()%body.GetName()%context%ssJoints.str());
 }
 
 class ChangeCallbackData : public UserData
@@ -5626,7 +5626,7 @@ void KinBody::_PrintNonAdjacentLinks(const boost::array<std::vector<int>, 4>& vN
         }
         ssLinks << "(" << (value & 0xffff) << "," << (value>>16) << ")";
     }
-    RAVELOG_INFO_FORMAT("env='%s', body '%s' computes the cache for GetNonAdjacentLinks(%d). linkPairs=[%s]", envNameId%bodyName%nonAdjacentMask%ssLinks.str());
+    RAVELOG_INFO_FORMAT("env=%s, body '%s' computes the cache for GetNonAdjacentLinks(%d). linkPairs=[%s]", envNameId%bodyName%nonAdjacentMask%ssLinks.str());
 }
 
 const std::vector<int>& KinBody::GetNonAdjacentLinks(int adjacentoptions) const
