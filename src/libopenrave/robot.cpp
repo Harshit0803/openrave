@@ -2113,6 +2113,7 @@ const std::vector<int>& RobotBase::GetNonAdjacentLinks(int adjacentoptions) cons
                 }
             }
             std::sort(_vNonAdjacentLinks[AO_Enabled].begin(), _vNonAdjacentLinks[AO_Enabled].end(), CompareNonAdjacentFarthest);
+            KinBody::_PrintNonAdjacentLinks(_vNonAdjacentLinks, AO_Enabled, GetEnv()->GetNameId(), GetName());
         }
         if( compute.at(AO_ActiveDOFs) ) {
             _vNonAdjacentLinks.at(AO_ActiveDOFs).resize(0);
@@ -2125,6 +2126,7 @@ const std::vector<int>& RobotBase::GetNonAdjacentLinks(int adjacentoptions) cons
                 }
             }
             std::sort(_vNonAdjacentLinks[AO_ActiveDOFs].begin(), _vNonAdjacentLinks[AO_ActiveDOFs].end(), CompareNonAdjacentFarthest);
+            KinBody::_PrintNonAdjacentLinks(_vNonAdjacentLinks, AO_ActiveDOFs, GetEnv()->GetNameId(), GetName());
         }
         if( compute.at(AO_Enabled|AO_ActiveDOFs) ) {
             _vNonAdjacentLinks.at(AO_Enabled|AO_ActiveDOFs).resize(0);
@@ -2135,6 +2137,7 @@ const std::vector<int>& RobotBase::GetNonAdjacentLinks(int adjacentoptions) cons
                 }
             }
             std::sort(_vNonAdjacentLinks[AO_Enabled|AO_ActiveDOFs].begin(), _vNonAdjacentLinks[AO_Enabled|AO_ActiveDOFs].end(), CompareNonAdjacentFarthest);
+            KinBody::_PrintNonAdjacentLinks(_vNonAdjacentLinks, AO_Enabled|AO_ActiveDOFs, GetEnv()->GetNameId(), GetName());
         }
         _nNonAdjacentLinkCache |= requestedoptions;
     }

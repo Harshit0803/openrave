@@ -3761,6 +3761,12 @@ protected:
     /// \brief Extract the first body's environmentBodyIndex from environment body indices pair.
     static int _GetSecondEnvironmentBodyIndexFromPair(const uint64_t pair);
 
+    /// \brief print the computed _vNonAdjacentLinks contents.
+    /// \param[in] vNonAdjacentLinks : from KinBody::_vNonAdjacentLinks
+    /// \param[in] nonAdjacentMask : index of element to print, which is mask. _vNonAdjacentLinks[nonAdjacentMask] is printed.
+    /// \param[in] envNameId, bodyName : for print message.
+    static void _PrintNonAdjacentLinks(const boost::array<std::vector<int>, 4>& vNonAdjacentLinks, const size_t nonAdjacentMask, const std::string& envNameId, const std::string& bodyName);
+
     std::string _name; ///< name of body
 
     std::vector<JointPtr> _vecjoints; ///< \see GetJoints

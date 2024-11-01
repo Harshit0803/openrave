@@ -5598,6 +5598,20 @@ bool CompareNonAdjacentFarthest(int pair0, int pair1)
     return dist0 > dist1;
 }
 
+void KinBody::_PrintNonAdjacentLinks(const boost::array<std::vector<int>, 4>& vNonAdjacentLinks, const size_t nonAdjacentMask, const std::string& envNameId, const std::string& bodyName)
+{
+    std::stringstream ssLinks;
+    const std::vector<int>& vSelectedNonAdjacentLinks = vNonAdjacentLinks[nonAdjacentMask];
+    for(size_t iLinks = 0; iLinks < vSelectedNonAdjacentLinks.size(); ++iLinks) {
+        const int value = vSelectedNonAdjacentLinks[iLinks];
+        if( iLinks > 0 ) {
+            ssLinks << ",";
+        }
+        ssLinks << "(" << (value & 0xffff) << "," << (value>>16) << ")";
+    }
+    RAVELOG_INFO_FORMAT("env=%d, body %s computes the cache for GetNonAdjacentLinks(%d). links=[%s]", envNameId%bodyName%nonAdjacentMask%ssLinks.str());
+}
+
 const std::vector<int>& KinBody::GetNonAdjacentLinks(int adjacentoptions) const
 {
     class TransformsSaver
@@ -5646,6 +5660,7 @@ private:
         std::sort(_vNonAdjacentLinks[0].begin(), _vNonAdjacentLinks[0].end(), CompareNonAdjacentFarthest);
         _nUpdateStampId++; // because transforms were modified
         _nNonAdjacentLinkCache = 0;
+        KinBody::_PrintNonAdjacentLinks(_vNonAdjacentLinks, 0, GetEnv()->GetNameId(), GetName());
     }
     if( (_nNonAdjacentLinkCache&adjacentoptions) != adjacentoptions ) {
         int requestedoptions = (~_nNonAdjacentLinkCache)&adjacentoptions;
@@ -5660,6 +5675,7 @@ private:
             }
             _nNonAdjacentLinkCache |= AO_Enabled;
             std::sort(_vNonAdjacentLinks[AO_Enabled].begin(), _vNonAdjacentLinks[AO_Enabled].end(), CompareNonAdjacentFarthest);
+            KinBody::_PrintNonAdjacentLinks(_vNonAdjacentLinks, AO_Enabled, GetEnv()->GetNameId(), GetName());
         }
         else {
             throw OPENRAVE_EXCEPTION_FORMAT(_("no support for adjacentoptions %d"), adjacentoptions,ORE_InvalidArguments);
