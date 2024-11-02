@@ -481,10 +481,8 @@ void KinBodyItem::Load()
                     }
                     geom->addPrimitiveSet(geom_prim);
 
-                    // If this is a large mesh, enable VBOs to get a performance boost
-                    if (mesh.vertices.size() > 1000) {
-                        geom->setUseVertexBufferObjects(true);
-                    }
+                    // Enable VBOs for performance
+                    geom->setUseVertexBufferObjects(true);
 
                     osgUtil::SmoothingVisitor::smooth(*geom); // compute vertex normals
                     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
