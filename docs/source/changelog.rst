@@ -3,10 +3,16 @@
 ChangeLog
 #########
 
-Version 0.157.0
+Version 0.158.0
 ===============
 
 - Add print message related to non adjacent links to track the self collision issue.
+
+Version 0.157.0
+===============
+
+- Add `KinBody::GetDirectlyAttachedBodies`
+- Create a default `JSONReadable` for rapidjson::Document deserialization
 
 Version 0.156.1
 ===============

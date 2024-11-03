@@ -914,7 +914,6 @@ protected:
     bool _Extract(const rapidjson::Value& rBodyInfo, KinBodyPtr& pBodyOut, const rapidjson::Value& rEnvInfo, dReal fUnitScale, rapidjson::Document::AllocatorType& alloc, std::map<RobotBase::ConnectedBodyInfoPtr, std::string>& mapProcessedConnectedBodyUris)
     {
         // extract for robot
-        bool isRobot = orjson::GetJsonValueByKey<bool>(rBodyInfo, "isRobot");
         std::string bodyId = orjson::GetJsonValueByKey<std::string>(rBodyInfo, "id", "");
         std::string bodyName = orjson::GetJsonValueByKey<std::string>(rBodyInfo, "name", "");
         const char* pReferenceUri = orjson::GetCStringJsonValueByKey(rBodyInfo, "referenceUri", "");
@@ -952,11 +951,13 @@ protected:
         RobotBase::RobotBaseInfoPtr pRobotBaseInfo;
         if( insertIndex >= 0 ) {
             pKinBodyInfo = envInfo._vBodyInfos.at(insertIndex);
+            bool isRobot = orjson::GetJsonValueByKey<bool>(rBodyInfo, "isRobot", pKinBodyInfo->_isRobot); // fallback to extract isRobot flag from the reference body info
             if( isRobot ) {
                 pRobotBaseInfo = OPENRAVE_DYNAMIC_POINTER_CAST<RobotBase::RobotBaseInfo>(pKinBodyInfo);
             }
         }
         else {
+            bool isRobot = orjson::GetJsonValueByKey<bool>(rBodyInfo, "isRobot");
             if( isRobot ) {
                 pRobotBaseInfo.reset(new RobotBase::RobotBaseInfo());
                 pKinBodyInfo = pRobotBaseInfo;
