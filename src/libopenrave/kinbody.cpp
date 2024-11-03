@@ -426,7 +426,9 @@ void KinBody::KinBodyInfo::_DeserializeReadableInterface(const std::string& id, 
         _mReadableInterfaces[id] = pStringReadable;
         return;
     }
-    RAVELOG_WARN_FORMAT("deserialize readable interface '%s' failed for body '%s' (uri '%s'), perhaps need to call 'RaveRegisterJSONReader' with the appropriate reader.", id%_name%(_uri.empty() ? _referenceUri : _uri));
+    JSONReadablePtr pReadableJSON(new JSONReadable(id, rReadable));
+    _mReadableInterfaces[id] = pReadableJSON;
+    // RAVELOG_WARN_FORMAT("deserialize readable interface '%s' failed for body '%s' (uri '%s'), perhaps need to call 'RaveRegisterJSONReader' with the appropriate reader.", id%_name%(_uri.empty() ? _referenceUri : _uri));
 }
 
 KinBody::KinBody(InterfaceType type, EnvironmentBasePtr penv) : InterfaceBase(type, penv)
@@ -5203,6 +5205,21 @@ void KinBody::_DeinitializeInternalInformation()
 
     // Clear all-pairs shortest path table to force recomputation
     _vAllPairsShortestPaths.clear();
+}
+
+void KinBody::GetDirectlyAttachedBodies(std::vector<KinBodyPtr>& vBodies) const
+{
+    // Clear the output and reserve enough space for all potentially attached bodies
+    vBodies.clear();
+    vBodies.reserve(_listAttachedBodies.size());
+
+    // Filter down the attached bodies to only the set of bodies that are still live
+    for (const KinBodyWeakPtr& pbody : _listAttachedBodies) {
+        KinBodyPtr attachedBody = pbody.lock();
+        if (!!attachedBody) {
+            vBodies.emplace_back(std::move(attachedBody));
+        }
+    }
 }
 
 bool KinBody::IsAttached(const KinBody &body) const
