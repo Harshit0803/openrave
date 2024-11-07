@@ -68,7 +68,7 @@ set_target_properties(libopenrave PROPERTIES OUTPUT_NAME openrave${OPENRAVE_LIBR
 target_compile_definitions(libopenrave PRIVATE "OPENRAVE_STATIC_PLUGINS=${OPENRAVE_STATIC_PLUGINS}")
 target_link_libraries(libopenrave
   PRIVATE boost_assertion_failed static_plugins openrave-md5 ${openrave_static_libraries} openrave-msgpack
-  PUBLIC LibXml2::LibXml2 Boost::filesystem Boost::thread ${CMAKE_DL_LIBS} ${openrave_libraries}
+  PUBLIC ${LibXml2_LIBRARIES} Boost::filesystem Boost::thread ${CMAKE_DL_LIBS} ${openrave_libraries}
 )
 install(TARGETS libopenrave
   EXPORT openrave-targets
@@ -120,7 +120,7 @@ if( OPT_STATIC )
   endif()
   target_link_libraries(libopenrave_static
     PRIVATE boost_assertion_failed static_plugins openrave-md5 ${openrave_static_libraries} openrave-msgpack
-    PUBLIC LibXml2::LibXml2 Boost::filesystem Boost::thread ${openrave_libraries}
+    PUBLIC ${LibXml2_LIBRARIES} Boost::filesystem Boost::thread ${openrave_libraries}
   )
   install(TARGETS libopenrave_static
   EXPORT openrave-targets

@@ -38,7 +38,7 @@ option(OPT_PLUGINS "Build the pluings" ON)
 option(OPT_DOUBLE_PRECISION "Use double precision" ON)
 option(OPT_ACCURATEMATH "Use accurate and robust math to account for floating-point errors" ON)
 option(OPT_PYTHON "Build python bindings" ON)
-option(OPT_PYTHON3 "Build python bindings" ON)
+option(OPT_PYTHON3 "Build python bindings" OFF)
 option(OPT_OCTAVE "Build octave bindings" ON)
 option(OPT_MATLAB "Build matlab bindings" ON)
 option(OPT_STATIC "Build static libraries" OFF)
@@ -406,6 +406,13 @@ else()
 endif()
 
 find_package(LibXml2 REQUIRED)
+if (LibXml2_FOUND)
+    include_directories(${LibXml2_INCLUDE_DIR})
+    link_libraries(${LibXml2_LIBRARIES})
+else()
+    message(FATAL_ERROR "libxml2 not found. Please install libxml2 development package.")
+endif()
+
 
 add_library(openrave_gpgme IMPORTED INTERFACE)
 if (OPT_ENCRYPTION)
@@ -680,13 +687,14 @@ else()
 endif()
 
 if (OPT_PYTHON)
-  find_package(Python2 2.7 REQUIRED COMPONENTS Interpreter Development NumPy)
-  message(STATUS "Python 2 version is ${Python2_VERSION}")
+  find_package(PythonInterp 2.7 REQUIRED)
+  find_package(PythonLibs 2.7 REQUIRED)
+  message(STATUS "Python 2 version is ${PYTHON_VERSION_STRING}")
   execute_process(
-    COMMAND ${Python2_EXECUTABLE} -c "import distutils.sysconfig as sysconf; import os; \
+    COMMAND ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig as sysconf; import os; \
       print(os.path.relpath(sysconf.get_python_lib(1, prefix='${CMAKE_INSTALL_PREFIX}'), '${CMAKE_INSTALL_PREFIX}'))"
-      OUTPUT_VARIABLE OPENRAVE_PYTHON2_INSTALL_DIR OUTPUT_STRIP_TRAILING_WHITESPACE
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    OUTPUT_VARIABLE OPENRAVE_PYTHON2_INSTALL_DIR OUTPUT_STRIP_TRAILING_WHITESPACE
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   )
   message(STATUS "Python2 site-packages path is ${OPENRAVE_PYTHON2_INSTALL_DIR}")
   set(OPENRAVEPY2_INSTALL_DIR "${OPENRAVE_PYTHON2_INSTALL_DIR}/openravepy" CACHE PATH "OpenRAVE Python bindings installation directory")
@@ -696,11 +704,19 @@ if (OPT_PYTHON)
   set(OPENRAVE_PYTHON_INSTALL_DIR ${OPENRAVE_PYTHON2_INSTALL_DIR})
   set(OPENRAVEPY_INSTALL_DIR      ${OPENRAVEPY2_INSTALL_DIR})
   set(OPENRAVEPY_VER_INSTALL_DIR  ${OPENRAVEPY2_VER_INSTALL_DIR})
-  set(PYTHON_EXECUTABLE           ${Python2_EXECUTABLE})
+  set(PYTHON_EXECUTABLE           ${PYTHON_EXECUTABLE})
+
+  # Find NumPy include directory
+  execute_process(
+    COMMAND ${PYTHON_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
+    OUTPUT_VARIABLE PYTHON_NUMPY_INCLUDE_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  include_directories(${PYTHON_NUMPY_INCLUDE_DIR})
 
   # get the sympy version
   execute_process(
-    COMMAND ${Python2_EXECUTABLE} -c "import sympy; print(sympy.__version__)"
+    COMMAND ${PYTHON_EXECUTABLE} -c "import sympy; print(sympy.__version__)"
     OUTPUT_VARIABLE _sympy_version OUTPUT_STRIP_TRAILING_WHITESPACE
     RESULT_VARIABLE _sympy_version_failed
   )
@@ -716,7 +732,7 @@ if (OPT_PYTHON)
       endif()
     endif()
   else()
-      message(STATUS "failed to find python sympy system installation")
+    message(STATUS "failed to find python sympy system installation")
   endif()
 
   if( OPENRAVE_USE_LOCAL_SYMPY )
@@ -745,20 +761,21 @@ if (OPT_PYTHON)
   install(TARGETS openravepy2_meta EXPORT openrave-targets)
 
   set(PYBIND11_NOPYTHON ON)
-  find_package(pybind11 2.9.2) # 2.9.2 is the last version of pybind11 to support Python 2.
+  find_package(pybind11 2.9.2)
 
   if (pybind11_FOUND)
-    target_link_libraries(openravepy2_meta INTERFACE rt Python2::Module Python2::NumPy pybind11::module libopenrave libopenrave-core)
-    target_compile_options(openravepy2_meta INTERFACE "-fvisibility=hidden") # pybind11 requires less visibility
+    target_link_libraries(openravepy2_meta INTERFACE rt ${PYTHON_LIBRARIES} pybind11::module libopenrave libopenrave-core)
+    target_compile_options(openravepy2_meta INTERFACE "-fvisibility=hidden")
     target_compile_definitions(openravepy2_meta INTERFACE "OPENRAVE_CORE_DLL=1" "USE_PYBIND11_PYTHON_BINDINGS=1")
     set(USE_PYBIND11_PYTHON_BINDINGS ON)
   else()
     find_package(Boost REQUIRED COMPONENTS python thread)
-    target_link_libraries(openravepy2_meta INTERFACE rt Python2::Module Python2::NumPy Boost::python Boost::thread libopenrave libopenrave-core)
+    target_link_libraries(openravepy2_meta INTERFACE rt ${PYTHON_LIBRARIES} Boost::python Boost::thread libopenrave libopenrave-core)
     target_compile_definitions(openravepy2_meta INTERFACE "OPENRAVE_CORE_DLL=1")
     set(USE_PYBIND11_PYTHON_BINDINGS OFF)
   endif()
 endif()
+
 
 if (OPT_PYTHON3)
   find_package(Python3 REQUIRED COMPONENTS Interpreter Development NumPy)
