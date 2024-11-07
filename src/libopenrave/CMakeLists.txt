@@ -72,8 +72,11 @@ target_link_libraries(libopenrave
 )
 install(TARGETS libopenrave
   EXPORT openrave-targets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${OPENRAVE_INCLUDE_INSTALL_DIR}
 )
+
 
 if( OPT_CBINDINGS )
   add_library(libopenrave_c SHARED libopenrave_c.cpp)
@@ -86,9 +89,12 @@ if( OPT_CBINDINGS )
     LINK_FLAGS "${LIBOPENRAVE_LINK_FLAGS} ${FPARSER_LINK_FLAGS}")
   target_link_libraries(libopenrave_c PRIVATE boost_assertion_failed PUBLIC libopenrave)
   install(TARGETS libopenrave_c
-    EXPORT openrave-targets
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${OPENRAVE_INCLUDE_INSTALL_DIR}
-  )
+  EXPORT openrave-targets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${OPENRAVE_INCLUDE_INSTALL_DIR}
+)
+
 endif()
 
 
@@ -117,7 +123,9 @@ if( OPT_STATIC )
     PUBLIC LibXml2::LibXml2 Boost::filesystem Boost::thread ${openrave_libraries}
   )
   install(TARGETS libopenrave_static
-    EXPORT openrave-targets
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${OPENRAVE_INCLUDE_INSTALL_DIR}
-  )
+  EXPORT openrave-targets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${OPENRAVE_INCLUDE_INSTALL_DIR}
+)
 endif()
