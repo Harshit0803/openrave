@@ -66,6 +66,9 @@ set_target_properties(libopenrave PROPERTIES OUTPUT_NAME openrave${OPENRAVE_LIBR
                                   COMPILE_FLAGS "${LIBOPENRAVE_COMPILE_FLAGS} ${FPARSER_CXX_FLAGS} -DOPENRAVE_DLL_EXPORTS -DOPENRAVE_DLL"
                                   LINK_FLAGS "${LIBOPENRAVE_LINK_FLAGS} ${FPARSER_LINK_FLAGS}")
 target_compile_definitions(libopenrave PRIVATE "OPENRAVE_STATIC_PLUGINS=${OPENRAVE_STATIC_PLUGINS}")
+
+target_include_directories(libopenrave PUBLIC /usr/include/rapidjson)
+
 target_link_libraries(libopenrave
   PRIVATE boost_assertion_failed static_plugins openrave-md5 ${openrave_static_libraries} openrave-msgpack
   PUBLIC ${LibXml2_LIBRARIES} Boost::filesystem Boost::thread ${CMAKE_DL_LIBS} ${openrave_libraries}
@@ -87,6 +90,9 @@ if( OPT_CBINDINGS )
     VERSION ${OPENRAVE_VERSION}
     COMPILE_FLAGS "${LIBOPENRAVE_COMPILE_FLAGS} ${FPARSER_CXX_FLAGS} -DOPENRAVE_DLL -DOPENRAVE_C_DLL -DOPENRAVE_C_DLL_EXPORTS"
     LINK_FLAGS "${LIBOPENRAVE_LINK_FLAGS} ${FPARSER_LINK_FLAGS}")
+
+  target_include_directories(libopenrave_c PUBLIC /usr/include/rapidjson)
+
   target_link_libraries(libopenrave_c PRIVATE boost_assertion_failed PUBLIC libopenrave)
   install(TARGETS libopenrave_c
   EXPORT openrave-targets
@@ -118,6 +124,10 @@ if( OPT_STATIC )
   if( TARGET crlibm-native )
     add_dependencies(libopenrave_static check_libm_accuracy-native) # forces check to be run before libopenrave is compilde
   endif()
+
+target_include_directories(libopenrave_static PUBLIC /usr/include/rapidjson)
+
+
   target_link_libraries(libopenrave_static
     PRIVATE boost_assertion_failed static_plugins openrave-md5 ${openrave_static_libraries} openrave-msgpack
     PUBLIC ${LibXml2_LIBRARIES} Boost::filesystem Boost::thread ${openrave_libraries}

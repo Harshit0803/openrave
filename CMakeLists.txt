@@ -387,12 +387,30 @@ if( CLOCK_GETTIME_FOUND )
   add_definitions(-DCLOCK_GETTIME_FOUND)
 endif()
 
-find_package(RapidJSON)
-if( RAPIDJSON_FOUND )
-  include_directories(${RAPIDJSON_INCLUDES})
+
+set(RapidJSON_INCLUDE_DIR /usr/include)
+include_directories(${RapidJSON_INCLUDE_DIR})
+
+
+
+#find_package(RapidJSON)
+#if( RAPIDJSON_FOUND )
+#  include_directories(${RAPIDJSON_INCLUDES})
+#else()
+#  message(FATAL_ERROR "rapidjson library not found")
+#endif()
+
+find_package(RapidJSON REQUIRED)
+include_directories("/usr/include")
+include_directories("/usr/include/rapidjson")
+message(STATUS "RapidJSON Include Dirs: ${RapidJSON_INCLUDE_DIRS}")
+
+if (TRUE)
+    include_directories(${RapidJSON_INCLUDE_DIRS})
 else()
-  message(FATAL_ERROR "rapidjson library not found")
+    message(FATAL_ERROR "RapidJSON library not found. Please install rapidjson-dev.")
 endif()
+
 
 find_package(msgpack-cxx 6.0.0)
 if (msgpack-cxx_FOUND OR msgpack_FOUND)
