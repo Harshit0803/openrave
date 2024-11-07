@@ -265,6 +265,13 @@ else()
   set(OPENRAVE_LIBRARY_SUFFIX "${OPENRAVE_SOVERSION}" CACHE STRING "Suffix to append to library names")
 endif()
 
+
+find_package(LAPACK REQUIRED)
+find_package(BLAS REQUIRED)
+
+
+
+
 find_package(Boost REQUIRED COMPONENTS filesystem system thread iostreams)
 set(OPENRAVE_BOOST_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
 set(OPENRAVE_BOOST_LIB_DIRS ${Boost_LIBRARY_DIRS})
@@ -436,7 +443,10 @@ find_package(LibXml2 REQUIRED)
 if (LibXml2_FOUND)
     include_directories(${LibXml2_INCLUDE_DIR})
     include_directories("/usr/include/libxml2")
-    link_libraries(${LibXml2_LIBRARIES})
+    set(LibXml2_LIBRARIES xml2)
+    link_libraries(${LibXml2_LIBRARIES})  # Keep this as preferred
+    #target_link_libraries(testparabolicramp ${LibXml2_LIBRARIES})
+
 else()
     message(FATAL_ERROR "libxml2 not found. Please install libxml2 development package.")
 endif()
