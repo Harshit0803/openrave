@@ -70,7 +70,7 @@ target_compile_definitions(libopenrave PRIVATE "OPENRAVE_STATIC_PLUGINS=${OPENRA
 target_include_directories(libopenrave PUBLIC /usr/include/rapidjson)
 
 target_link_libraries(libopenrave
-  PRIVATE boost_assertion_failed static_plugins openrave-md5 ${openrave_static_libraries} openrave-msgpack
+  PRIVATE boost_assertion_failed static_plugins openrave-md5 ${openrave_static_libraries}
   PUBLIC ${LibXml2_LIBRARIES} Boost::filesystem Boost::thread ${CMAKE_DL_LIBS} ${openrave_libraries}
 )
 install(TARGETS libopenrave
@@ -129,7 +129,7 @@ target_include_directories(libopenrave_static PUBLIC /usr/include/rapidjson)
 
 
   target_link_libraries(libopenrave_static
-    PRIVATE boost_assertion_failed static_plugins openrave-md5 ${openrave_static_libraries} openrave-msgpack
+    PRIVATE boost_assertion_failed static_plugins openrave-md5 ${openrave_static_libraries}
     PUBLIC ${LibXml2_LIBRARIES} Boost::filesystem Boost::thread ${openrave_libraries}
   )
   install(TARGETS libopenrave_static

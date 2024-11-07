@@ -388,7 +388,10 @@ if( CLOCK_GETTIME_FOUND )
 endif()
 
 
-set(RapidJSON_INCLUDE_DIR /usr/include)
+#set(RapidJSON_INCLUDE_DIR /usr/include)
+#include_directories(${RapidJSON_INCLUDE_DIR})
+
+set(RapidJSON_INCLUDE_DIR /usr/local/include/rapidjson/include)
 include_directories(${RapidJSON_INCLUDE_DIR})
 
 
@@ -412,24 +415,32 @@ else()
 endif()
 
 
-find_package(msgpack-cxx 6.0.0)
-if (msgpack-cxx_FOUND OR msgpack_FOUND)
-  set(OPENRAVE_MSGPACK 1)
-else()
-  if (OPT_MSGPACK)
-    message(FATAL_ERROR "msgpack feature was requested but msgpack libraries could not be found.")
-  else()
-    set(OPENRAVE_MSGPACK 0)
-  endif()
-endif()
+#find_package(msgpack-cxx 6.0.0)
+#if (msgpack-cxx_FOUND OR msgpack_FOUND)
+#  set(OPENRAVE_MSGPACK 1)
+#else()
+#  if (OPT_MSGPACK)
+#    message(FATAL_ERROR "msgpack feature was requested but msgpack libraries could not be found.")
+#  else()
+#    set(OPENRAVE_MSGPACK 0)
+#  endif()
+#endif()
+
+find_package(msgpack-cxx REQUIRED)
+include_directories(${msgpack-cxx_INCLUDE_DIRS})
+
+# No need to link to an actual library, as it's header-only
+set(OPENRAVE_MSGPACK 1)
 
 find_package(LibXml2 REQUIRED)
 if (LibXml2_FOUND)
     include_directories(${LibXml2_INCLUDE_DIR})
+    include_directories("/usr/include/libxml2")
     link_libraries(${LibXml2_LIBRARIES})
 else()
     message(FATAL_ERROR "libxml2 not found. Please install libxml2 development package.")
 endif()
+
 
 
 add_library(openrave_gpgme IMPORTED INTERFACE)
