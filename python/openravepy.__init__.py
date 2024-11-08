@@ -20,6 +20,9 @@ Internals
 
 There is a __build_doc__ external variable that is set to True only when building docs. This allows package to clean their symbols and documentation.
 """
+__openravepy_version__ = '0.157'
+
+
 try:
     if __openravepy_build_doc__:
         print('openravepy imported in documentation mode')
