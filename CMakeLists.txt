@@ -271,8 +271,12 @@ else()
 endif()
 
 
-find_package(LAPACK REQUIRED)
 find_package(BLAS REQUIRED)
+find_package(LAPACK REQUIRED)
+if (NOT BLAS_FOUND OR NOT LAPACK_FOUND)
+    set(BLAS_LIBRARIES "/usr/lib/x86_64-linux-gnu/libopenblas.so")
+    set(LAPACK_LIBRARIES "/usr/lib/x86_64-linux-gnu/libopenblas.so")
+endif()
 
 
 
@@ -443,6 +447,7 @@ include_directories(${msgpack-cxx_INCLUDE_DIRS})
 
 # No need to link to an actual library, as it's header-only
 set(OPENRAVE_MSGPACK 1)
+#link_libraries("/usr/lib/x86_64-linux-gnu/libblas.so" "/usr/lib/x86_64-linux-gnu/liblapack.so")
 
 find_package(LibXml2 REQUIRED)
 if (LibXml2_FOUND)
@@ -566,7 +571,7 @@ else()
 endif()
 
 link_directories(${OPENRAVE_LINK_DIRS})
-link_libraries(/usr/lib/x86_64-linux-gnu/libpython2.7.so)
+#link_libraries(/usr/lib/x86_64-linux-gnu/libpython2.7.so)
 
 # have to rely on the ivcon converter as a backup plan since assimp does not support iv/vrml
 add_subdirectory(3rdparty/ivcon)
