@@ -58,13 +58,14 @@
 #if  __cplusplus >= 201703L
 #include <string_view>
 #else
-#include <boost/container_hash/hash.hpp>
 #include <boost/utility/string_view.hpp>
+#include <boost/functional/hash.hpp>
 namespace std{
-    // make boost::string_view handlable by std::unordered_set/map
-    template<typename CharT,typename Traits>
-    class hash<boost::basic_string_view<CharT,Traits>>: public boost::hash<boost::basic_string_view<CharT,Traits>>
-    {
+    template<typename CharT, typename Traits>
+    struct hash<boost::basic_string_view<CharT, Traits>> {
+        std::size_t operator()(const boost::basic_string_view<CharT, Traits>& sv) const {
+            return boost::hash_range(sv.begin(), sv.end());
+        }
     };
 };
 #endif

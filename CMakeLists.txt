@@ -37,8 +37,8 @@ option(OPT_VIDEORECORDING "Enable video recording" ON)
 option(OPT_PLUGINS "Build the pluings" ON)
 option(OPT_DOUBLE_PRECISION "Use double precision" ON)
 option(OPT_ACCURATEMATH "Use accurate and robust math to account for floating-point errors" ON)
-option(OPT_PYTHON "Build python bindings" ON)
-option(OPT_PYTHON3 "Build python bindings" OFF)
+option(OPT_PYTHON "Build python bindings" OFF)
+option(OPT_PYTHON3 "Build python bindings" ON)
 option(OPT_OCTAVE "Build octave bindings" ON)
 option(OPT_MATLAB "Build matlab bindings" ON)
 option(OPT_STATIC "Build static libraries" OFF)
@@ -151,6 +151,11 @@ message(STATUS "OPENRAVEPY_INCLUDE_LOCAL_DIRS = ${OPENRAVEPY_INCLUDE_LOCAL_DIRS}
 # need this in the very first include, otherwise openrave plugins can accidentaly compile with a system-installed openrave headers.
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 include_directories(${OPENRAVE_INCLUDE_LOCAL_DIRS}) # needed since plugins include openrave/openrave.h
+include_directories(/usr/include/python2.7)
+include_directories(${CMAKE_SOURCE_DIR}/python/bindings/include)
+include_directories("/root/fcl/include")
+
+
 
 set(REQUIRED_INCLUDES "" CACHE STRING "Includes to always force  when compiling")
 include_directories(${REQUIRED_INCLUDES})
@@ -272,7 +277,7 @@ find_package(BLAS REQUIRED)
 
 
 
-find_package(Boost REQUIRED COMPONENTS filesystem system thread iostreams)
+find_package(Boost 1.62 REQUIRED COMPONENTS filesystem system thread iostreams)
 set(OPENRAVE_BOOST_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
 set(OPENRAVE_BOOST_LIB_DIRS ${Boost_LIBRARY_DIRS})
 
@@ -561,6 +566,7 @@ else()
 endif()
 
 link_directories(${OPENRAVE_LINK_DIRS})
+link_libraries(/usr/lib/x86_64-linux-gnu/libpython2.7.so)
 
 # have to rely on the ivcon converter as a backup plan since assimp does not support iv/vrml
 add_subdirectory(3rdparty/ivcon)
@@ -799,8 +805,9 @@ if (OPT_PYTHON)
   )
   install(TARGETS openravepy2_meta EXPORT openrave-targets)
 
-  set(PYBIND11_NOPYTHON ON)
-  find_package(pybind11 2.9.2)
+  set(pybind11_DIR "/usr/local/lib/python3.5/dist-packages/pybind11/share/cmake/pybind11")
+find_package(pybind11 2.9.2 REQUIRED)
+
 
   if (pybind11_FOUND)
     target_link_libraries(openravepy2_meta INTERFACE rt ${PYTHON_LIBRARIES} pybind11::module libopenrave libopenrave-core)

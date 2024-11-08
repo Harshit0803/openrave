@@ -3,12 +3,12 @@
 #define OPENRAVE_BOOSTPYTHON_BINDINGS_H
 
 #include <boost/multi_array.hpp>
-
+namespace pyb = pybind11;
 #define OPENRAVEPY_API
 #include <boost/python.hpp> // already has #include <boost/shared_ptr.hpp>
 #define OPENRAVE_PYTHON_MODULE(X) BOOST_PYTHON_MODULE(X)
 // might need a space before "::"?
-#define PY_ARGS(...) py::args(__VA_ARGS__),
+#define PY_ARGS(...) pyb::args(__VA_ARGS__),
 
 namespace boost {
 namespace python {

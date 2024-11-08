@@ -756,9 +756,6 @@ void ViewerManager::_RunViewerThread()
         bool bShowViewer = true;
         {
             std::unique_lock<std::mutex> lock(_mutexViewer);
-            if (_bShutdown) {
-                break;
-            }
             if( _listviewerinfos.size() == 0 ) {
                 _conditionViewer.wait(lock);
                 if( _listviewerinfos.size() == 0 ) {
@@ -1104,9 +1101,6 @@ static std::vector<KinBody::KinBodyInfoPtr> _ExtractBodyInfoArray(object vBodyIn
     }
     catch(...) {
         RAVELOG_WARN("Cannot do ExtractArray for BodyInfos");
-#ifdef USE_PYBIND11_PYTHON_BINDINGS
-        throw;
-#endif
     }
     return vBodyInfos;
 }
